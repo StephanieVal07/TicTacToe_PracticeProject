@@ -1,0 +1,388 @@
+import string
+import random
+from bisect import bisect_left ,bisect
+
+play_game = True #default true so the game keeps going
+winner = None
+init_spac = ["1. _", "2. _", "3. _","_", "_", "_", "4. _", "5. _", "6. _","_", "_", "_", "7. _", "8. _", "9. _", "_", "_", "_"]
+
+spac = ["_", "_", "_","_", "_", "_","_", "_", "_"]
+
+def init_displayboard():
+  print(init_spac[0]+ " | " + init_spac[1]+ " | " + init_spac[2] + "        " +init_spac[3]+ " | " + init_spac[4]+ " | " + init_spac[5])
+  print(init_spac[6]+ " | " + init_spac[7]+ " | " + init_spac[8] + "        " +init_spac[9]+ " | " + init_spac[10]+ " | " + init_spac[11])
+  print(init_spac[12]+ " | " + init_spac[13]+ " | " + init_spac[14] + "        " +init_spac[15]+ " | " + init_spac[16]+ " | " + init_spac[17])
+
+def displayboard():
+  print(spac[0]+ " | " + spac[1]+ " | " + spac[2])
+  print(spac[3]+ " | " + spac[4]+ " | " + spac[5])
+  print(spac[6]+ " | " + spac[7]+ " | " + spac[8])
+
+def symbolass():
+  XorO = ["X", "O"]
+  # random item from list
+  #print("Your assigned symbol is: ", random.choice(XorO))
+  i = random.choice(XorO)
+  #print("Your assigned symbol is: ", i)
+  return i
+
+
+def computer_pick(first_player):
+  a = first_player
+  #print("whats it currently: " + a)
+  if a =='X':
+    #current_player = 'O'
+    a = 'O'
+    #return current_player
+    first_player = a
+    return first_player
+    #print("Now should be o: " + a)
+  elif a == 'O':
+    #current_player = 'X'
+    #return current_player
+    #a = current_player
+    a = 'X'
+    first_player = a
+    return first_player
+    #print("Now should be x: " + a)
+
+
+def turn(first_player):
+  #prints random assigned value
+  print("\n")
+  print("Your assigned symbol is: ", first_player)
+  print("\n")
+  #################################
+  ind_init = input("Input your placement (1-9), "+ first_player+": ")
+  #print(a)
+  if ind_init =="Q" or ind_init =="q":
+    #try out while loop to try and break program when its time to close
+    print()
+    print("Closing Game")
+    #quit()
+    exit()
+    return 
+  else:
+     while True: 
+      try:
+        a = int(ind_init)
+        if a < 1 or a > 9 or a==0:
+          print("\n Hmmm, sorry, '",ind_init, "' Is Out of Range. \n Please enter a valid number (1-9), " + first_player)
+          print()
+          displayboard()
+          ind_init = input("Input your symbol placement (1-9): [1]")
+        #check if string or not tomorrow
+        selc_indx=int(ind_init) - 1
+        #counts from 1-9 instead of 0-8 when using x - 1
+        rep_init = input("Please input your assigned symbol: ").upper()
+        rep_str = str(rep_init)
+        if rep_str != 'X' and rep_str != 'O':
+          print("\n Nope! '"+ rep_str+"' Is an Invalid Input. \n Please enter your symbol, "+ first_player+ ".")
+        #
+        if rep_str == 'X' or rep_str == 'O':
+          if rep_init != first_player:
+            print("\n Sorry. It is " + first_player+ "'s turn. Please enter a your symbol, "+ first_player+ ".\n")
+        #  
+        if rep_str == first_player:
+          if spac[selc_indx] == "_":
+              spac[selc_indx] = rep_str
+              displayboard()
+              return
+          else:
+            displayboard()
+            print("Nope! That spot is already taken!")
+            print("Try again, " + first_player+"!")
+      except ValueError:
+          print("'",ind_init, "' Is an Invalid Input. Please enter a valid number, "+ first_player+ ".")
+          print()
+          displayboard()
+      ind_init = input("Input your symbol placement (1-9): ")
+      #needs to give them a way to try again
+
+def first_turn():
+  i = symbolass()
+  print("\n")
+  print("First player, your assigned symbol is: ", i)
+  print("\n")
+  #################################
+  ind_init = input("Input your placement (1-9), "+ i+": ")
+  #print(a)
+  i = str(i)
+  if ind_init =="Q" or ind_init =="q":
+    print()
+    print("Closing Game")
+    #quit()
+    exit()
+    return 
+  else:
+     while True: 
+      try:
+        a = int(ind_init)
+        if a < 1 or a > 9 or a==0:
+          print("\n Hmmm, sorry, '",ind_init, "' Is Out of Range. \n Please enter a valid number (1-9), " + i)
+          print()
+          displayboard()
+          ind_init = input("Input your symbol placement (1-9): ")
+          #check if string or not tomorrow
+        selc_indx=int(ind_init) - 1
+        rep_init = input("Please input your assigned symbol: ").upper()
+        rep_str = str(rep_init)
+        if rep_str != 'X' and rep_str != 'O':
+          print("\n Nope! '"+ rep_str+"' Is an Invalid Input. \n Please enter your symbol, "+ i+ ".")
+        #
+        if rep_str == 'X' or rep_str == 'O':
+          if rep_str != i:
+            print("\n Sorry. It is " + i+ "'s turn. Please enter a your symbol "+ i+ ".\n")
+        #
+        if rep_str == i:
+          if spac[selc_indx] == "_":
+              spac[selc_indx] = rep_str
+              displayboard()
+              #print("OMFG WHAT IS GOING ON WHAT IS THE CURRENT PLAYER (1)"+ i)
+              return i
+          else:
+            displayboard()
+            print("Nope! That spot is already taken!")
+            print("Try again, " + i+"!")
+      except ValueError:
+          print("'",ind_init, "' Is an Invalid Input. Please enter a valid number, "+ i+ ".")
+          print()
+          displayboard()
+      #
+      ind_init = input("Input your symbol placement (1-9): ")
+      #print("OMFG WHAT IS GOING ON WHAT IS THE CURRENT PLAYER (2)"+ i)
+      #return i
+  
+def winner_message():
+  message = [" won!", ", congrat's you won!", ", you won! How clever of you!", ", you are the winner!"]
+  # random item from list
+  i = random.choice(message)
+  return i
+
+def tie_message():
+  message = ["It's a Tie!", "Lucky you. It is a tie", "A stalemate! How clever of you!", "Stalemate!", "Drawn Game!", "Wow! A Blanket Finish!"]
+  # random item from list
+  i = random.choice(message)
+  return i
+
+
+
+current_player = symbolass()
+current_player = str(current_player)
+def play():
+   #put while loop to play game second time
+  global current_player
+  message_win = winner_message()
+  message_tie = tie_message()
+  user_response = 'y'
+  
+  print("Here is how to play/setup: \n")
+  print("1. Enter 'q' or 'Q' (in the input placement question) if you want to quit the game at any time! \n")
+  print("2. The first player is assigned a symbol and subsequent player gets what's left over. \n")
+  print("3. When a symbol is assigned choose where you would like to place that symbol based on the displayed numerated board. \n")
+  print("4. Opponents cannot override another players pick \n")
+  print("5. To win, get your assigned symbol in a row of three (3), in a column of three (3), or diagonally in three (3) to win! \n")
+  print("Good Luck!!! \n\n")
+
+  while user_response =='y' or user_response=='Y':
+    #display inital board
+    print("Here is how the board is labeled and counted: ")
+    init_displayboard()
+  
+    a = str(first_turn())
+    #print(type(a))
+    #print("whats it currently: " + a)
+    #current_player = str(current_player)
+    if a =='X':
+      #current_player = 'O'
+      a = 'O'
+      #return current_player
+      current_player = str(a)
+      #print(type(current_player))
+      #print("Now should be o: " + a)
+    elif a == 'O':
+      #current_player = 'X'
+      #return current_player
+      #a = current_player
+      a = 'X'
+      current_player = str(a)
+      #print(type(current_player))
+      #print("Now should be x: " + a)
+    
+    #print("(FLIPPED 1) should return the opposite: " + a)
+  
+    while play_game:
+      #print("should be (a): " + current_player)
+      #print("should be (a)" + a + ": ")
+      turn(current_player) #maybe should apply the randomly selected 
+      #print("Who is the current player!?(1): "+ current_player)
+      #make a function for computer generated selection
+      #flip_player()
+      b = current_player
+      if b =='X':
+      #current_player = 'O'
+        b = 'O'
+      #return current_player
+        current_player = b
+      #print("Now should be o: " + a)
+      elif b == 'O':
+      #current_player = 'X'
+      #return current_player
+      #a = current_player
+        b = 'X'
+        current_player = b
+      #check_complete()
+      ann_result = check_complete()
+      if ann_result:
+        winner = ann_result #only for winner maybe need to make condition for tie
+        #print("winner is (2): " + winner)
+        if winner == "X" or winner =="O":
+          print("\n")
+          print(winner + message_win)
+          #from function that randomizes message for winner
+          #return 
+          #print("Enter 'Y' if you would like to play again?(Y|N) ")
+          #input(user_response)
+          break
+        elif winner == "None":
+          print("\n")
+          print(message_tie)
+          #return 
+          break
+    #displayboard() #game has ended
+    user_response= input("\nWould you like to play again?(Y|N) ")
+    print("\n")
+    if user_response == "y" or user_response =="Y":
+      print("\nGame Reset....\n")
+      empty_board()
+    #spac.pop(2)
+    #FIGURE OUT HOW TO RESET THE MOTHER FUCKING BOARD!!!!!
+  print("\n Good Game!")
+
+def empty_board():
+  count = 0
+  for a in range(9):
+    if spac[a] == "_":
+      count += 1
+  #print("How many does it count?", count)
+  if count != 9:
+    #print(count, "!= 9")
+    for b in range(9):
+      if spac[b] != "_":
+        #print("where is b", b)
+        #print(spac[b])
+        spac[b] = "_"
+        #print(spac[b])
+  #return b
+  #print(spac)    
+
+def check_complete():
+  ann_winner = check_win()
+  ann_tie = check_tie()
+
+  if ann_winner:
+    winner = ann_winner
+    #print("winner is (1): " + winner)
+    return winner
+  elif ann_tie:
+    winner = ann_tie
+    #print("tie dude (1)")
+    return winner
+
+
+def check_win():
+  #check rows, columns, diagonal
+  row_win = check_rows()
+  diagonal_win = check_diagonal()
+  column_win = check_columns()
+  if row_win:
+    winner = row_win
+    #print("winner is: " + winner)
+    return winner 
+  elif diagonal_win:
+    winner = diagonal_win
+    return winner
+  elif column_win:
+    winner = column_win
+    return winner
+  #else:
+  #  winner = None
+  #  return winner
+
+def check_rows():
+  if spac[0] == "X" and spac[1]=="X" and spac[2]=="X":
+    #print("winner is x")
+    winner = "X"
+    return winner
+  elif spac[3] == "X" and spac[4]=="X" and spac[5]=="X":
+    winner = "X"
+    return winner
+  elif spac[6] == "X" and spac[7]=="X" and spac[8]=="X":
+    winner = "X"
+    return winner
+  elif spac[0] == "O" and spac[1]=="O" and spac[2]=="O":
+    #print("winner is O")
+    winner = "O"
+    return winner
+  elif spac[3] == "O" and spac[4]=="O" and spac[5]=="O":
+    #print("winner is O")
+    winner = "O"
+    return winner
+  elif spac[6] == "O" and spac[7]=="O" and spac[8]=="O":
+    #print("winner is O")
+    winner = "O"
+    return winner
+
+
+def check_columns():
+  if spac[0] == "X" and spac[3]=="X" and spac[6]=="X":
+    winner = "X"
+    return winner
+  elif spac[1] == "X" and spac[4]=="X" and spac[7]=="X":
+    winner = "X"
+    return winner
+  elif spac[2] == "X" and spac[5]=="X" and spac[8]=="X":
+    winner = "X"
+    return winner
+  elif spac[0] == "O" and spac[3]=="O" and spac[6]=="O":
+    winner = "O"
+    return winner
+  elif spac[1] == "O" and spac[4]=="O" and spac[7]=="O":
+    winner = "O"
+    return winner
+  elif spac[2] == "O" and spac[5]=="O" and spac[8]=="O":
+    winner = "O"
+    return winner  
+  
+
+def check_diagonal():
+  #diagonal for the win!?
+  if spac[0] == "X" and spac[4]=="X" and spac[8]=="X":
+    winner = "X"
+    return winner
+  elif spac[2] == "X" and spac[4]=="X" and spac[6]=="X":
+    winner = "X"
+    return winner
+  elif spac[0] == "O" and spac[4]=="O" and spac[8]=="O":
+    winner = "O"
+    return winner
+  elif spac[2] == "O" and spac[4]=="O" and spac[6]=="O":
+    winner = "O"
+    return winner
+
+def check_tie():
+  #check no rows, no columns, no diagonal wins
+  count = 0
+  for a in range(9):
+    if spac[a] == 'X' or spac[a] =='O':
+      count += 1
+      #print("count: ", count)
+  if count == 9:
+    #print("its a tie(0)")
+    winner = "None" 
+    #why do I keep using strings!? lol
+    # had to use "None" instead of None/Null
+    #probably has to do with the assignment operators. I wonder if I just returned winner if it would work
+    return winner 
+      
+play()
